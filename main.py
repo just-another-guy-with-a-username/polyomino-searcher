@@ -198,7 +198,7 @@ class Polyomino:
 		self.clear_excess()
 		return new_polyominoes
 
-def search(n=4):
+def search(n):
 	n -= n%1
 	if n <= 0 :
 		return []
@@ -241,10 +241,46 @@ def search(n=4):
 			graphs.append(next.graph)
 	return kept
 
+def listify_step(polyominoes_section, pos, graph):
+	if pos == len(polyominoes_section):
+		return graph
+	graph2 = copy.deepcopy(polyominoes_section[pos].graph)
+	num_rows = max([len(graph), len(graph2)])
+	while len(graph) < num_rows:
+		empty_row = []
+		for cell in graph[0]:
+			empty_row.append(False)
+		graph.append(empty_row)
+	while len(graph2) < num_rows:
+		empty_row = []
+		for cell in graph2[0]:
+			empty_row.append(False)
+		graph2.append(empty_row)
+	for i in range(num_rows):
+		graph[i].append(False)
+		graph[i] += graph2[i]
+	return listify_step(polyominoes_section, pos + 1, graph)
+
+def listify(polyominoes, n):
+	n = int(n-n%1)
+	pol_list = []
+	for i in range(0, len(polyominoes), n):
+		c_group = None
+		if len(polyominoes) - i > n - 1:
+			c_group = listify_step(polyominoes[i+1:i + n], 0, polyominoes[i].graph)
+		else:
+			c_group = listify_step(polyominoes[i+1:], 0, polyominoes[i].graph)
+		pol_list.append(Polyomino(len(c_group), len(c_group[0]), c_group))
+	return pol_list
+
 if len(sys.argv) > 1:
 	polyominoes = search(float(sys.argv[1]))
 else:
 	polyominoes = search(4)
-for p in polyominoes:
+if len(sys.argv) > 2:
+	pol_list = listify(polyominoes, float(sys.argv[2]))
+else:
+	pol_list = listify(polyominoes, 4)
+for p in pol_list:
 	print(p)
 print(f"n = {len(polyominoes)}")
