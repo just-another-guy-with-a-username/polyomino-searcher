@@ -199,6 +199,9 @@ class Polyomino:
 		return new_polyominoes
 
 def search(n=4):
+	n -= n%1
+	if n <= 0 :
+		return []
 	if n == 1:
 		p = Polyomino(1, 1)
 		p.add_block(0, 0)
@@ -232,11 +235,16 @@ def search(n=4):
 			next.rotate()
 			if next.graph in graphs:
 				continue
+			if next.rows > next.columns:
+				next.rotate()
 			kept.append(next)
 			graphs.append(next.graph)
 	return kept
 
-polyominoes = search(int(sys.argv[1]))
+if len(sys.argv) > 1:
+	polyominoes = search(float(sys.argv[1]))
+else:
+	polyominoes = search(4)
 for p in polyominoes:
 	print(p)
 print(f"n = {len(polyominoes)}")
