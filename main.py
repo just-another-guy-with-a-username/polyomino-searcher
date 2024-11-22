@@ -96,10 +96,8 @@ class Polyomino:
 
 	def rel_sym_check(self):
 		graph = copy.deepcopy(self.graph)
-		print(graph)
 		self.reflect_h()
 		graph2 = copy.deepcopy(self.graph)
-		print(graph2)
 		self.reflect_h()
 		self.reflect_v()
 		graph3 = copy.deepcopy(self.graph)
@@ -248,11 +246,12 @@ def search(n=4):
 					new = False
 					break
 			if new:
+				next.prep_for_list()
 				kept.append(next)
 				graphs.append(next.graph)
 	return kept
 
 polyominoes = search(int(sys.argv[1]))
-print(f"n = {len(polyominoes)}")
+print(f"n = {len(polyominoes)}\n")
 for p in polyominoes:
 	print(p)
