@@ -156,36 +156,20 @@ class Polyomino:
 		adjacents = []
 		for i in range(self.rows):
 			for j in range(self.columns):
-				if i == 0 and j == 0:
-					if self.graph[i+1][j] or self.graph[i][j+1]:
-						adjacents.append((i, j))
-						continue
-				elif i == 0 and j == self.columns - 1:
-					if self.graph[i+1][j] or self.graph[i][j-1]:
-						adjacents.append((i, j))
-						continue
-				elif i == self.rows - 1 and j == 0:
-					if self.graph[i-1][j] or self.graph[i][j+1]:
-						adjacents.append((i, j))
-						continue
-				elif i == self.rows - 1 and j == self.columns - 1:
-					if self.graph[i-1][j] or self.graph[i][j-1]:
-						adjacents.append((i, j))
-						continue
-				elif i == 0:
-					if self.graph[i+1][j] or self.graph[i][j+1] or self.graph[i][j-1]:
+				if i == 0:
+					if self.graph[i+1][j]:
 						adjacents.append((i, j))
 						continue
 				elif j == 0:
-					if self.graph[i+1][j] or self.graph[i][j+1] or self.graph[i-1][j]:
+					if self.graph[i][j+1]:
 						adjacents.append((i, j))
 						continue
 				elif i == self.rows - 1:
-					if self.graph[i-1][j] or self.graph[i][j+1] or self.graph[i][j-1]:
+					if self.graph[i-1][j]:
 						adjacents.append((i, j))
 						continue
 				elif j == self.columns - 1:
-					if self.graph[i+1][j] or self.graph[i-1][j] or self.graph[i][j-1]:
+					if self.graph[i][j-1]:
 						adjacents.append((i, j))
 						continue
 				else:
@@ -225,33 +209,34 @@ def search(n=4):
 	for prev in prev_gen:
 		next_gen = prev.new_polyominoes()
 		for next in next_gen:
-			new = True
-			vars = [copy.deepcopy(next)]
+			if next.graph in graphs:
+				continue
 			next.rotate()
-			vars.append(copy.deepcopy(next))
+			if next.graph in graphs:
+				continue
 			next.rotate()
-			vars.append(copy.deepcopy(next))
+			if next.graph in graphs:
+				continue
 			next.rotate()
-			vars.append(copy.deepcopy(next))
-			next.reflect_h()
-			vars.append(copy.deepcopy(next))
+			if next.graph in graphs:
+				continue
+			next.reflect_v()
+			if next.graph in graphs:
+				continue
 			next.rotate()
-			vars.append(copy.deepcopy(next))
+			if next.graph in graphs:
+				continue
 			next.rotate()
-			vars.append(copy.deepcopy(next))
+			if next.graph in graphs:
+				continue
 			next.rotate()
-			vars.append(copy.deepcopy(next))
-			for var in vars:
-				if var.graph in graphs:
-					new = False
-					break
-			if new:
-				next.prep_for_list()
-				kept.append(next)
-				graphs.append(next.graph)
+			if next.graph in graphs:
+				continue
+			kept.append(next)
+			graphs.append(next.graph)
 	return kept
 
 polyominoes = search(int(sys.argv[1]))
-print(f"n = {len(polyominoes)}\n")
 for p in polyominoes:
 	print(p)
+print(f"n = {len(polyominoes)}")
