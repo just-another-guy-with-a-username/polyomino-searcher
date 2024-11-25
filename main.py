@@ -6,8 +6,9 @@ class Polyomino:
 		self.rows = rows
 		self.columns = columns
 		self.one_hor_ref_sym = False
-		self.two_ref_sym = False
+		self.two_hor_ref_sym = False
 		self.one_dia_ref_sym = False
+		self.two_dia_ref_sym = False
 		self.nin_rot_sym = False
 		self.hal_rot_sym = False
 		self.graph = graph
@@ -94,7 +95,7 @@ class Polyomino:
 			self.rotate()
 			self.rotate()
 
-	def rel_sym_check(self):
+	def ref_sym_check(self):
 		graph = copy.deepcopy(self.graph)
 		self.reflect_h()
 		graph2 = copy.deepcopy(self.graph)
@@ -111,21 +112,17 @@ class Polyomino:
 		self.rotate()
 		self.reflect_h()
 		if graph == graph2 and graph == graph3:
-			self.two_ref_sym = True
+			self.two_hor_ref_sym = True
+		if graph == graph2 or graph == graph3:
 			self.one_hor_ref_sym = True
-			self.one_dia_ref_sym = True
-		elif graph == graph2 or graph == graph3:
-			self.two_ref_sym = False
-			self.one_dia_ref_sym = False
-			self.one_hor_ref_sym = True
-		elif graph == graph4 or graph == graph5:
-			self.two_ref_sym = False
-			self.one_hor_ref_sym = False
+		if graph == graph4 and graph == graph5:
+			self.two_dia_ref_sym = True
+		if graph == graph4 or graph == graph5:
 			self.one_dia_ref_sym = True
 
 	def sym_check(self):
 		self.rot_sym_check()
-		self.rel_sym_check()
+		self.ref_sym_check()
 
 	def clear_excess(self):
 		has_true = False
@@ -262,6 +259,8 @@ def listify_step(polyominoes_section, pos, graph):
 	return listify_step(polyominoes_section, pos + 1, graph)
 
 def listify(polyominoes, n):
+	if polyominoes == []:
+		return []
 	n = int(n-n%1)
 	pol_list = []
 	for i in range(0, len(polyominoes), n):
@@ -273,14 +272,31 @@ def listify(polyominoes, n):
 		pol_list.append(Polyomino(len(c_group), len(c_group[0]), c_group))
 	return pol_list
 
-if len(sys.argv) > 1:
-	polyominoes = search(float(sys.argv[1]))
-else:
-	polyominoes = search(4)
-if len(sys.argv) > 2:
-	pol_list = listify(polyominoes, float(sys.argv[2]))
-else:
-	pol_list = listify(polyominoes, 4)
+print("Welcome to the polyomino searcher! Type the size of your desired polyomino to begin (10 is the highest number you can expect to finish quickly).")
+n = ""
+while True:
+	n = input("desired size: ")
+	if not n.isdigit():
+		print("Only positive integers and zero can be used as size values")
+		continue
+	n = int(n)
+	break
+
+print("How many polyominoes do you want displayed per row? Too high of a number could result in the polyominoes stretching beyond the limit of the screen and going down to the next line, which distorts the polyominoes.")
+n2 = ""
+while True:
+	n2 = input("desired row length: ")
+	if not n2.isdigit():
+		print("Only positive non-zero integers can be used as row length values")
+		continue
+	n2 = int(n2)
+	if n2 == 0:
+		print("Only positive non-zero integers can be used as row length values")
+		continue
+	break
+
+polyominoes = search(float(n))
+pol_list = listify(polyominoes, float(n2))
 for p in pol_list:
 	print(p)
-print(f"n = {len(polyominoes)}")
+print(f"number of size {n} polyominoes: {len(polyominoes)}")
