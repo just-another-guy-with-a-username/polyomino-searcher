@@ -1,6 +1,6 @@
 # polyomino-searcher
 
-This is a very slow brute force method for finding polyominoes
+This is a brute force method for finding polyominoes
 
 To intall this application, run
 
